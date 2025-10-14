@@ -43,27 +43,30 @@ function RightPanel.create(parent)
 	layout.Padding = UDim.new(0, 6)
 
 	local sectionButtons = {}
+	local currentExpandedButton
 
 	function RightPanel.addButton(section, data)
 		if not sectionButtons[section] then
 			sectionButtons[section] = {}
 		end
 
-		local btn = Instance.new("Frame")
-		btn.Size = UDim2.new(1, -10, 0, 42)
-		btn.BackgroundColor3 = BtnColor
-		btn.Parent = scroll
+		local btnFrame = Instance.new("TextButton")
+		btnFrame.Size = UDim2.new(1, -10, 0, 42)
+		btnFrame.BackgroundColor3 = BtnColor
+		btnFrame.Text = ""
+		btnFrame.AutoButtonColor = false
+		btnFrame.Parent = scroll
 
-		local corner = Instance.new("UICorner", btn)
+		local corner = Instance.new("UICorner", btnFrame)
 		corner.CornerRadius = UDim.new(0, 8)
 
-		local stroke = Instance.new("UIStroke", btn)
+		local stroke = Instance.new("UIStroke", btnFrame)
 		stroke.Color = TextColor
 		stroke.Transparency = 0.7
 		stroke.Thickness = 1
 
 		local nameLabel = Instance.new("TextLabel")
-		nameLabel.Size = UDim2.new(1, -90, 1, 0)
+		nameLabel.Size = UDim2.new(1, -90, 0, 42)
 		nameLabel.Position = UDim2.new(0, 5, 0, 0)
 		nameLabel.BackgroundTransparency = 1
 		nameLabel.TextColor3 = TextColor
@@ -71,7 +74,7 @@ function RightPanel.create(parent)
 		nameLabel.Font = Enum.Font.GothamMedium
 		nameLabel.TextSize = 15
 		nameLabel.TextXAlignment = Enum.TextXAlignment.Left
-		nameLabel.Parent = btn
+		nameLabel.Parent = btnFrame
 
 		local executeBtn = Instance.new("TextButton")
 		executeBtn.Size = UDim2.new(0, 70, 0, 30)
@@ -82,31 +85,63 @@ function RightPanel.create(parent)
 		executeBtn.Font = Enum.Font.Gotham
 		executeBtn.TextSize = 14
 		executeBtn.AutoButtonColor = false
-		executeBtn.Parent = btn
+		executeBtn.Parent = btnFrame
 
 		local cornerEx = Instance.new("UICorner", executeBtn)
 		cornerEx.CornerRadius = UDim.new(0, 6)
 
-		local descLabel = Instance.new("TextLabel")
-		descLabel.Size = UDim2.new(1, -10, 0, 0)
-		descLabel.Position = UDim2.new(0, 5, 1, 5)
-		descLabel.BackgroundTransparency = 1
-		descLabel.TextColor3 = TextColor
-		descLabel.Text = data.description or "No description"
-		descLabel.TextWrapped = true
-		descLabel.TextXAlignment = Enum.TextXAlignment.Left
-		descLabel.TextYAlignment = Enum.TextYAlignment.Top
-		descLabel.Font = Enum.Font.Gotham
-		descLabel.TextSize = 14
-		descLabel.Parent = btn
+		local descLabel
+		local expanded = false
+		local dropdownHeight = 50
+
+		local function showDropdown()
+			if descLabel then descLabel:Destroy() end
+			descLabel = Instance.new("TextLabel")
+			descLabel.Size = UDim2.new(1, -10, 0, dropdownHeight)
+			descLabel.Position = UDim2.new(0, 5, 0, 42)
+			descLabel.BackgroundTransparency = 1
+			descLabel.TextColor3 = TextColor
+			descLabel.Text = data.description or "No description"
+			descLabel.TextWrapped = true
+			descLabel.TextXAlignment = Enum.TextXAlignment.Left
+			descLabel.TextYAlignment = Enum.TextYAlignment.Top
+			descLabel.Font = Enum.Font.Gotham
+			descLabel.TextSize = 14
+			descLabel.Parent = btnFrame
+		end
+
+		local function hideDropdown()
+			if descLabel then
+				descLabel:Destroy()
+				descLabel = nil
+			end
+		end
+
+		btnFrame.MouseButton1Click:Connect(function()
+			if currentExpandedButton and currentExpandedButton ~= btnFrame then
+				TweenService:Create(currentExpandedButton, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(1, -10, 0, 42)}):Play()
+				local otherDesc = currentExpandedButton:FindFirstChildWhichIsA("TextLabel")
+				if otherDesc then otherDesc:Destroy() end
+			end
+
+			expanded = not expanded
+			local goalSize = expanded and 42 + dropdownHeight or 42
+			TweenService:Create(btnFrame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(1, -10, 0, goalSize)}):Play()
+
+			if expanded then
+				showDropdown()
+			else
+				hideDropdown()
+			end
+
+			currentExpandedButton = expanded and btnFrame or nil
+		end)
 
 		executeBtn.MouseEnter:Connect(function()
-			TweenService:Create(descLabel, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(1, -10, 0, 50)}):Play()
 			TweenService:Create(executeBtn, TweenInfo.new(0.2), {BackgroundColor3 = ExecuteHover}):Play()
 		end)
 
 		executeBtn.MouseLeave:Connect(function()
-			TweenService:Create(descLabel, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(1, -10, 0, 0)}):Play()
 			TweenService:Create(executeBtn, TweenInfo.new(0.2), {BackgroundColor3 = ExecuteColor}):Play()
 		end)
 
@@ -121,7 +156,7 @@ function RightPanel.create(parent)
 			end
 		end)
 
-		table.insert(sectionButtons[section], btn)
+		table.insert(sectionButtons[section], btnFrame)
 	end
 
 	function RightPanel.switchTo(section)

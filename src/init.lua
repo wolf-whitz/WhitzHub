@@ -15,6 +15,24 @@ local function isGameReady()
     return true
 end
 
+local function createPersistentScreenGui(name)
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    local existingGui = playerGui:FindFirstChild(name)
+    if existingGui then
+        return existingGui
+    end
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = name
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = playerGui
+
+    return screenGui
+end
+
 local function safeStart()
     if not isGameReady() then
         warn("[⚠️] Roblox environment not ready, waiting...")
@@ -23,21 +41,22 @@ local function safeStart()
         until isGameReady()
     end
 
+    local gui = createPersistentScreenGui("MyMainUI")
     local Intro = import("./modules/intro") or {}
 
     if type(Intro.createIntro) == "function" then
         Intro.createIntro(function()
             local Main = import("./modules/main")
             if type(Main.create) == "function" then
-                Main.create()
+                Main.create(gui)
             else
                 warn("[⚠️] create() not found in Main module")
             end
-        end)
+        end, gui)
     else
         local Main = import("./modules/main")
         if type(Main.create) == "function" then
-            Main.create()
+            Main.create(gui)
         else
             warn("[⚠️] create() not found in Main module!")
         end
