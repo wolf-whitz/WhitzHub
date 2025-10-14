@@ -4,6 +4,7 @@ function Intro.createIntro(callback)
     local Players = game:GetService("Players")
     local TweenService = game:GetService("TweenService")
     local RunService = game:GetService("RunService")
+    local Lighting = game:GetService("Lighting")
 
     local player = Players.LocalPlayer
     if not player then
@@ -28,13 +29,13 @@ function Intro.createIntro(callback)
     local gradient = Instance.new("UIGradient", bg)
     gradient.Rotation = 90
     gradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 10, 20)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 30)),
         ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
     })
 
     local blur = Instance.new("BlurEffect")
     blur.Size = 0
-    blur.Parent = game:GetService("Lighting")
+    blur.Parent = Lighting
 
     local title = Instance.new("TextLabel")
     title.Text = "WhitzHub"
@@ -68,9 +69,9 @@ function Intro.createIntro(callback)
     local tweenIn = TweenInfo.new(1, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
     local tweenOut = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 
-    local bgFadeIn = TweenService:Create(bg, tweenIn, {BackgroundTransparency = 0.2})
-    local blurIn = TweenService:Create(blur, tweenIn, {Size = 12})
-    local titleIn = TweenService:Create(title, tweenIn, {TextTransparency = 0, Position = UDim2.new(0.5, 0, 0.43, 0)})
+    local bgFadeIn = TweenService:Create(bg, tweenIn, {BackgroundTransparency = 0.25})
+    local blurIn = TweenService:Create(blur, tweenIn, {Size = 15})
+    local titleIn = TweenService:Create(title, tweenIn, {TextTransparency = 0, Position = UDim2.new(0.5, 0, 0.43, 0), Size = UDim2.new(0, 420, 0, 85)})
     local subtitleIn = TweenService:Create(subtitle, TweenInfo.new(1.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextTransparency = 0})
 
     local glowIn = TweenService:Create(glow, TweenInfo.new(1, Enum.EasingStyle.Quad), {Transparency = 0.5})
@@ -78,7 +79,7 @@ function Intro.createIntro(callback)
 
     local fadeOut = TweenService:Create(bg, tweenOut, {BackgroundTransparency = 1})
     local blurOut = TweenService:Create(blur, tweenOut, {Size = 0})
-    local titleOut = TweenService:Create(title, tweenOut, {TextTransparency = 1, Position = UDim2.new(0.5, 0, 0.4, 0)})
+    local titleOut = TweenService:Create(title, tweenOut, {TextTransparency = 1, Position = UDim2.new(0.5, 0, 0.4, 0), Size = UDim2.new(0, 400, 0, 80)})
     local subtitleOut = TweenService:Create(subtitle, tweenOut, {TextTransparency = 1, Position = UDim2.new(0.5, 0, 0.6, 0)})
 
     bgFadeIn:Play()

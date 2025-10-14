@@ -5,7 +5,7 @@ local LeftPanel = {}
 local THEME = {
     Background = Color3.fromRGB(25, 25, 25),
     TabDefault = Color3.fromRGB(50, 50, 50),
-    TabHover = Color3.fromRGB(75, 75, 75),
+    TabHover = Color3.fromRGB(70, 70, 70),
     TabActive = Color3.fromRGB(100, 100, 255),
     TextColor = Color3.fromRGB(240, 240, 240),
     Accent = Color3.fromRGB(0, 120, 255),
@@ -19,7 +19,8 @@ function LeftPanel.create(parent, onTabClick)
     frame.BackgroundTransparency = 0.2
     frame.Parent = parent
 
-    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+    local corner = Instance.new("UICorner", frame)
+    corner.CornerRadius = UDim.new(0, 10)
 
     local gradient = Instance.new("UIGradient", frame)
     gradient.Color = ColorSequence.new{
@@ -61,7 +62,8 @@ function LeftPanel.create(parent, onTabClick)
         btn.LayoutOrder = order or 1
         btn.Parent = scroll
 
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+        local btnCorner = Instance.new("UICorner", btn)
+        btnCorner.CornerRadius = UDim.new(0, 8)
 
         local accent = Instance.new("Frame")
         accent.Name = "Accent"
@@ -74,42 +76,47 @@ function LeftPanel.create(parent, onTabClick)
 
         tabButtons[name] = btn
 
-        -- Hover animation
+        local originalSize = btn.Size
+        local hoverSize = originalSize + UDim2.new(0, 4, 0, 4)
+
         btn.MouseEnter:Connect(function()
             if btn ~= activeButton then
-                TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = THEME.TabHover}):Play()
+                TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+                    BackgroundColor3 = THEME.TabHover,
+                    Size = hoverSize
+                }):Play()
             end
         end)
 
         btn.MouseLeave:Connect(function()
             if btn ~= activeButton then
-                TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = THEME.TabDefault}):Play()
+                TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+                    BackgroundColor3 = THEME.TabDefault,
+                    Size = originalSize
+                }):Play()
             end
         end)
 
-        -- Click event
         btn.MouseButton1Click:Connect(function()
             if activeButton == btn then
-                -- Already active; allow re-click without breaking hover state
                 if onTabClick then onTabClick(name) end
                 return
             end
 
-            -- Reset previous tab visuals
             if activeButton then
-                TweenService:Create(activeButton, TweenInfo.new(0.2), {
-                    BackgroundColor3 = THEME.TabDefault
-                }):Play()
                 local prevAccent = activeButton:FindFirstChild("Accent")
+                TweenService:Create(activeButton, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {
+                    BackgroundColor3 = THEME.TabDefault,
+                    Size = originalSize
+                }):Play()
                 if prevAccent then
-                    TweenService:Create(prevAccent, TweenInfo.new(0.25), {Size = UDim2.new(0, 0, 1, 0)}):Play()
+                    TweenService:Create(prevAccent, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 0, 1, 0)}):Play()
                 end
             end
 
-            -- Set new active tab
             activeButton = btn
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = THEME.TabActive}):Play()
-            TweenService:Create(accent, TweenInfo.new(0.25), {Size = UDim2.new(0, 4, 1, 0)}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {BackgroundColor3 = THEME.TabActive, Size = originalSize}):Play()
+            TweenService:Create(accent, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 4, 1, 0)}):Play()
 
             if onTabClick then
                 onTabClick(name)

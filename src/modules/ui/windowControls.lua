@@ -1,34 +1,14 @@
 local WindowControls = {}
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService")
-
-local SETTINGS_FILE = "settings.json"
-
-local function readSettings()
-	local data
-	pcall(function()
-		if isfile and isfile(SETTINGS_FILE) then
-			data = HttpService:JSONDecode(readfile(SETTINGS_FILE))
-		end
-	end)
-	return data or { darkmode = true }
-end
 
 function WindowControls.create(topBar, window, gui)
-	local settings = readSettings()
-	local dark = settings.darkmode
-
-	local colors = dark and {
+	local colors = {
 		bg = Color3.fromRGB(35, 35, 35),
 		hover = Color3.fromRGB(70, 70, 90),
 		icon = Color3.fromRGB(255, 255, 255),
 		hoverIcon = Color3.fromRGB(180, 200, 255)
-	} or {
-		bg = Color3.fromRGB(230, 230, 230),
-		hover = Color3.fromRGB(210, 210, 255),
-		icon = Color3.fromRGB(30, 30, 30),
-		hoverIcon = Color3.fromRGB(70, 100, 255)
 	}
 
 	local function styleButton(btn)
@@ -40,30 +20,30 @@ function WindowControls.create(topBar, window, gui)
 		btn.ZIndex = 2
 		local corner = Instance.new("UICorner", btn)
 		corner.CornerRadius = UDim.new(0, 6)
+
+		local originalSize = btn.Size
+		local hoverSize = originalSize + UDim2.new(0,4,0,4)
+
+		local hoverTween, leaveTween
 		btn.MouseEnter:Connect(function()
-			TweenService:Create(btn, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+			if leaveTween then leaveTween:Cancel() end
+			hoverTween = TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {
 				BackgroundTransparency = 0.1,
 				ImageColor3 = colors.hoverIcon,
-				BackgroundColor3 = colors.hover
-			}):Play()
+				Size = hoverSize
+			})
+			hoverTween:Play()
 		end)
 		btn.MouseLeave:Connect(function()
-			TweenService:Create(btn, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+			if hoverTween then hoverTween:Cancel() end
+			leaveTween = TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {
 				BackgroundTransparency = 0.3,
 				ImageColor3 = colors.icon,
-				BackgroundColor3 = colors.bg
-			}):Play()
+				Size = originalSize
+			})
+			leaveTween:Play()
 		end)
 	end
-
-	local settingsButton = Instance.new("ImageButton")
-	settingsButton.Size = UDim2.new(0, 30, 0, 30)
-	settingsButton.Position = UDim2.new(0, 8, 0, 2)
-	settingsButton.Image = "rbxassetid://102254373423014"
-	settingsButton.ImageRectOffset = Vector2.new(964, 324)
-	settingsButton.ImageRectSize = Vector2.new(36, 36)
-	styleButton(settingsButton)
-	settingsButton.Parent = topBar
 
 	local closeButton = Instance.new("ImageButton")
 	closeButton.Size = UDim2.new(0, 30, 0, 30)
@@ -86,6 +66,27 @@ function WindowControls.create(topBar, window, gui)
 	styleButton(maximizeButton)
 	maximizeButton.Parent = topBar
 
+	local fpsLabel = Instance.new("TextLabel")
+	fpsLabel.Size = UDim2.new(0, 60, 0, 25)
+	fpsLabel.Position = UDim2.new(0, 8, 0, 5)
+	fpsLabel.BackgroundTransparency = 1
+	fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	fpsLabel.Font = Enum.Font.Code
+	fpsLabel.TextSize = 16
+	fpsLabel.TextXAlignment = Enum.TextXAlignment.Left
+	fpsLabel.Parent = topBar
+
+	local lastTime = tick()
+	local frameCount = 0
+	RunService.RenderStepped:Connect(function()
+		frameCount = frameCount + 1
+		if tick() - lastTime >= 1 then
+			fpsLabel.Text = "FPS: "..frameCount
+			frameCount = 0
+			lastTime = tick()
+		end
+	end)
+
 	local isMinimized, isMaximized = false, false
 	local originalSize = window.Size
 	local originalPos = window.Position
@@ -106,17 +107,6 @@ function WindowControls.create(topBar, window, gui)
 
 	window:GetPropertyChangedSignal("Size"):Connect(updateContentFrame)
 	window:GetPropertyChangedSignal("Position"):Connect(updateContentFrame)
-
-	local tweenInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-
-	settingsButton.MouseButton1Click:Connect(function()
-		local ok, Setting = pcall(function()
-			return import("./setting")
-		end)
-		if ok and Setting and Setting.open then
-			Setting.open(gui)
-		end
-	end)
 
 	minimizeButton.MouseButton1Click:Connect(function()
 		isMinimized = not isMinimized
@@ -176,7 +166,6 @@ function WindowControls.create(topBar, window, gui)
 	end)
 
 	updateContentFrame()
-
 	return contentFrame
 end
 

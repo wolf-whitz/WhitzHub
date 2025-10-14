@@ -24,6 +24,30 @@
     "url": "https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/flycar.lua"
   },
     {
+    "name": "Universal Server Hop",
+    "description": "A universal server hopping tools, it allows you to switch server, select server, join low population server",
+    "section": "Universal",
+    "url": "https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/serverhop.lua"
+  },
+     {
+    "name": "Universal swimfly",
+    "description": "A universal swim fly",
+    "section": "Universal",
+    "url": "https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/swimfly.lua"
+  },
+     {
+    "name": "Universal bang script",
+    "description": "Fml",
+    "section": "Universal",
+    "url": "https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/bang.lua"
+  },
+     {
+    "name": "Universal esp ",
+    "description": "A universal esp  tools",
+    "section": "Universal",
+    "url": "https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/esp.lua"
+  },
+    {
     "name": "Anti Death",
     "description": "Universal anti death script, anti death script always return your character body to its death position, something like a respawn point where your character dies!",
     "section": "Universal",
