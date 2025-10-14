@@ -1,0 +1,9 @@
+{
+  "main": "./src/init.lua",
+  "output": "dist/bundle.lua",
+  "include": ["src/modules", "./src/modules/scripts"],
+  "scripts": {
+    "input": "./src/scripts/index.json",
+    "output": "./src/modules/main.lua"
+  }
+}

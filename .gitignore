@@ -1,0 +1,15 @@
+# Ignore logs
+*.log
+
+# Ignore compiled Lua output
+*.luac
+
+# Ignore temporary files
+.DS_Store
+Thumbs.db
+
+# Ignore node modules (if using Node.js for tooling)
+node_modules/
+
+# Ignore environment variables
+.env
