@@ -14,6 +14,8 @@ scripts = {
 {id=10, section="Universal", name="Waypoint", description="Universal Waypoint ", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/tps/waypoint.lua"}
 }
 -- END SCRIPTS TABLE
+
+
 local WindowControls = import("./ui/windowControls")
 local LeftPanel = import("./ui/leftPanel")
 local RightPanel = import("./ui/rightPanel")

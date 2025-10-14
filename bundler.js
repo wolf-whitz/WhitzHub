@@ -1,13 +1,26 @@
 import fs from "fs";
 import path from "path";
 import { z } from "zod";
+import chokidar from "chokidar";
 import { LuaCompiler } from "./luacompiler.js";
 import compileScripts from "./scriptcompiler.js";
 
 const CONFIG_FILE = path.resolve("./bundle.json");
 
+const FLAGS = {
+    watch: process.argv.includes("--watch"),
+    verbose: process.argv.includes("--verbose"),
+    once: process.argv.includes("--once")
+};
+
+function log(...args) { console.log(...args); }
+function info(...args) { console.log("ℹ️", ...args); }
+function success(...args) { console.log("✅", ...args); }
+function warn(...args) { console.warn("⚠️", ...args); }
+function error(...args) { console.error("❌", ...args); }
+
 if (!fs.existsSync(CONFIG_FILE)) {
-    console.error("❌ bundle.json not found:", CONFIG_FILE);
+    error("bundle.json not found:", CONFIG_FILE);
     process.exit(1);
 }
 
@@ -31,35 +44,72 @@ const SCRIPTS_INPUT = config.scripts?.input ? path.resolve(config.scripts.input)
 const SCRIPTS_OUTPUT = config.scripts?.output ? path.resolve(config.scripts.output) : null;
 
 if (!ENTRY_FILE || !OUTPUT_FILE) {
-    console.error("❌ main or output not configured in bundle.json");
+    error("main or output not configured in bundle.json");
     process.exit(1);
 }
 
-if (SCRIPTS_INPUT && SCRIPTS_OUTPUT) {
-    console.log(`📄 Compiling user scripts into sections: ${SCRIPTS_OUTPUT}`);
-    compileScripts({
-        inputJson: SCRIPTS_INPUT,
-        outputLua: SCRIPTS_OUTPUT,
-        includeDirs: INCLUDE_DIRS
+function buildAll() {
+    try {
+        log(`📦 Building at ${new Date().toLocaleTimeString()}...`);
+        if (SCRIPTS_INPUT && SCRIPTS_OUTPUT) {
+            log(`📄 Compiling user scripts into: ${SCRIPTS_OUTPUT}`);
+            compileScripts({
+                inputJson: SCRIPTS_INPUT,
+                outputLua: SCRIPTS_OUTPUT,
+                includeDirs: INCLUDE_DIRS
+            });
+            success(`Sections compiled to ${SCRIPTS_OUTPUT}`);
+        } else {
+            warn("Scripts input/output not configured, skipping sections compilation.");
+        }
+        const compiler = new LuaCompiler(INCLUDE_DIRS);
+        log(`📦 Compiling main Lua entry: ${ENTRY_FILE}`);
+        const mainBundle = compiler.compile(ENTRY_FILE);
+        fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
+        fs.writeFileSync(OUTPUT_FILE, mainBundle, "utf8");
+        success(`Lua bundle written to ${OUTPUT_FILE}`);
+    } catch (err) {
+        error("Error during build:", err);
+    }
+}
+
+buildAll();
+
+if (FLAGS.watch) {
+    info("👀 Watch mode enabled. Monitoring for changes...");
+    const watchPaths = [
+        ENTRY_FILE,
+        ...(INCLUDE_DIRS || []),
+        ...(SCRIPTS_INPUT ? [SCRIPTS_INPUT] : [])
+    ];
+    const watcher = chokidar.watch(watchPaths, {
+        ignored: /node_modules/,
+        ignoreInitial: true,
+        persistent: true
     });
-    console.log(`✅ Sections compiled to ${SCRIPTS_OUTPUT}`);
+    let isBuilding = false;
+    let rebuildQueued = false;
+    async function queueBuild() {
+        if (isBuilding) {
+            rebuildQueued = true;
+            return;
+        }
+        isBuilding = true;
+        buildAll();
+        isBuilding = false;
+        if (rebuildQueued) {
+            rebuildQueued = false;
+            await queueBuild();
+        }
+    }
+    watcher.on("all", (event, filePath) => {
+        const rel = path.relative(process.cwd(), filePath);
+        if (FLAGS.verbose) info(`🔁 ${event.toUpperCase()} -> ${rel}`);
+        queueBuild();
+    });
+    watcher.on("error", err => {
+        error("Watcher error:", err);
+    });
 } else {
-    console.warn("⚠️ Scripts input/output not configured, skipping sections compilation.");
+    log("🏁 Build complete. (use --watch to enable hot reloading)");
 }
-
-const compiler = new LuaCompiler(INCLUDE_DIRS);
-
-console.log(`📦 Compiling main Lua entry: ${ENTRY_FILE}`);
-
-let mainBundle;
-try {
-    mainBundle = compiler.compile(ENTRY_FILE);
-} catch (err) {
-    console.error("❌ Error compiling main entry:", err);
-    process.exit(1);
-}
-
-fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
-fs.writeFileSync(OUTPUT_FILE, mainBundle, "utf8");
-
-console.log(`✅ Lua bundle written to ${OUTPUT_FILE}`);

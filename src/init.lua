@@ -39,7 +39,7 @@ local function safeStart()
         if type(Main.create) == "function" then
             Main.create()
         else
-            warn("[⚠️] create() not found in Main module")
+            warn("[⚠️] create() not found in Main module!")
         end
     end
 end
