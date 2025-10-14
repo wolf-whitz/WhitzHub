@@ -42,6 +42,11 @@ function RightPanel.create(parent)
 	layout.SortOrder = Enum.SortOrder.LayoutOrder
 	layout.Padding = UDim.new(0, 6)
 
+	local padding = Instance.new("UIPadding", scroll)
+	padding.PaddingTop = UDim.new(0, 8)
+	padding.PaddingLeft = UDim.new(0, 6)
+	padding.PaddingRight = UDim.new(0, 6)
+
 	local sectionButtons = {}
 	local currentExpandedButton
 
@@ -146,14 +151,18 @@ function RightPanel.create(parent)
 		end)
 
 		executeBtn.MouseButton1Click:Connect(function()
-			if data.url and #data.url > 0 then
-				local success, err = pcall(function()
-					local func, loadErr = loadstring(game:HttpGet(data.url, true))
-					if not func then error(loadErr) end
-					func()
-				end)
-				if not success then warn("[⚠️] Failed to execute script:", err) end
+			if not data.url or #data.url == 0 then return end
+			if not string.match(data.url, "^https://raw%.githubusercontent%.com/") then
+				warn("[⚠️] Script blocked! Only URLs from raw.githubusercontent.com are allowed.")
+				return
 			end
+
+			local success, err = pcall(function()
+				local func, loadErr = loadstring(game:HttpGet(data.url, true))
+				if not func then error(loadErr) end
+				func()
+			end)
+			if not success then warn("[⚠️] Failed to execute script:", err) end
 		end)
 
 		table.insert(sectionButtons[section], btnFrame)
