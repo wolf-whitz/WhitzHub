@@ -5,13 +5,14 @@ scripts = {
 {id=1, section="Universal", name="Aimbot", description="Universal aimbot with FOV and tracer lines", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/aimbot.lua"},
 {id=2, section="Universal", name="Infinite Yield", description="Credits to iy devs", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/iy.lua"},
 {id=3, section="Universal", name="Fly GUI", description="A universal fly gui, doesnt work with body checking game (Eg games that check body velocity, hrp, so on, please use the Universal Powerful Fly script to bypass those types of game)", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/flyscript.lua"},
-{id=4, section="Universal", name="Anti Death", description="Universal anti death script, anti death script always return your character body to its death position, something like a respawn point where your character dies!", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/antideath.lua"},
-{id=5, section="Universal", name="Invisible tool", description="Allow yourself to be made invisible via the invisible tool!", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/invistool.lua"},
-{id=6, section="Prison Life", name="Kill aura", description="Kill aura for Prison Life", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/prisonlife/killaura.lua"},
-{id=7, section="Prison Life", name="Super Kill", description="Super Kill script for Prison Life", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/prisonlife/superkill.lua"},
-{id=8, section="Universal", name="Tp Gui", description="TP gui, allow yourself to be tpied anywhere, with a tp tool! universal", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/tps/tpgui.lua"},
-{id=9, section="Universal", name="TP Tool", description="A simple universal tp tool, allows your self to be tpied, if you wish to have gui please use the tp gui", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/tps/tptool.lua"},
-{id=10, section="Universal", name="Waypoint", description="Universal Waypoint ", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/tps/waypoint.lua"}
+{id=4, section="Universal", name="Universal Fly Car", description="A universal fly car", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/flycar.lua"},
+{id=5, section="Universal", name="Anti Death", description="Universal anti death script, anti death script always return your character body to its death position, something like a respawn point where your character dies!", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/antideath.lua"},
+{id=6, section="Universal", name="Invisible tool", description="Allow yourself to be made invisible via the invisible tool!", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/invistool.lua"},
+{id=7, section="Prison Life", name="Kill aura", description="Kill aura for Prison Life", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/prisonlife/killaura.lua"},
+{id=8, section="Prison Life", name="Super Kill", description="Super Kill script for Prison Life", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/prisonlife/superkill.lua"},
+{id=9, section="Universal", name="Tp Gui", description="TP gui, allow yourself to be tpied anywhere, with a tp tool! universal", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/tps/tpgui.lua"},
+{id=10, section="Universal", name="TP Tool", description="A simple universal tp tool, allows your self to be tpied, if you wish to have gui please use the tp gui", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/tps/tptool.lua"},
+{id=11, section="Universal", name="Waypoint", description="Universal Waypoint ", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/tps/waypoint.lua"}
 }
 -- END SCRIPTS TABLE
 

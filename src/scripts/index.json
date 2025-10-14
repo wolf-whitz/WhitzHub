@@ -18,6 +18,12 @@
     "url": "https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/flyscript.lua"
   },
     {
+    "name": "Universal Fly Car",
+    "description": "A universal fly car",
+    "section": "Universal",
+    "url": "https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/flycar.lua"
+  },
+    {
     "name": "Anti Death",
     "description": "Universal anti death script, anti death script always return your character body to its death position, something like a respawn point where your character dies!",
     "section": "Universal",
