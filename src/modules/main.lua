@@ -1,5 +1,7 @@
 local COMPILE_SCRIPTS_OUTPUT = true
 
+ 
+
 -- START SCRIPTS TABLE
 scripts = {
 {id=1, section="Universal", name="Aimbot", description="Universal aimbot with FOV and tracer lines", url="https://raw.githubusercontent.com/wolf-whitz/WhitzHub/main/src/scripts/luas/universal/aimbot.lua"},
@@ -20,23 +22,19 @@ scripts = {
 }
 -- END SCRIPTS TABLE
 
-
 local WindowControls = import("./ui/windowControls")
 local LeftPanel = import("./ui/leftPanel")
 local RightPanel = import("./ui/rightPanel")
-
 local Players = game:GetService("Players")
 
- 
-
 local Main = {}
+Main.scripts = scripts
 
 function Main.create()
     local player = Players.LocalPlayer
     if not player then return end
 
     local gui = Instance.new("ScreenGui")
-    gui.Name = "MainUI"
     gui.IgnoreGuiInset = true
     gui.ResetOnSpawn = false
     gui.Parent = player:WaitForChild("PlayerGui")
@@ -44,26 +42,45 @@ function Main.create()
     local window = Instance.new("Frame")
     window.Size = UDim2.new(0, 700, 0, 450)
     window.Position = UDim2.new(0.05, 0, 0.05, 0)
-    window.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    window.BackgroundTransparency = 0.4
+    window.BackgroundTransparency = 0.7
+    window.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    window.BorderSizePixel = 0
+    window.ClipsDescendants = true
     window.Parent = gui
 
     local corner = Instance.new("UICorner", window)
-    corner.CornerRadius = UDim.new(0, 16)
-    local stroke = Instance.new("UIStroke", window)
-    stroke.Color = Color3.fromRGB(200, 200, 200)
-    stroke.Transparency = 0.5
-    stroke.Thickness = 2
+    corner.CornerRadius = UDim.new(0, 12)
+
+    local gradient = Instance.new("UIGradient", window)
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(35, 35, 35)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 15, 15))
+    }
+    gradient.Rotation = 90
+
+    local blur = Instance.new("UIStroke", window)
+    blur.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    blur.Color = Color3.fromRGB(180, 180, 255)
+    blur.Transparency = 0.6
+    blur.Thickness = 1.5
 
     local topBar = Instance.new("Frame")
     topBar.Size = UDim2.new(1, 0, 0, 35)
-    topBar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    topBar.BackgroundTransparency = 0.3
+    topBar.Position = UDim2.new(0, 0, 0, 0)
+    topBar.BackgroundTransparency = 0.8
+    topBar.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
+    topBar.BorderSizePixel = 0
     topBar.Parent = window
 
-    local content = WindowControls.create(topBar, window, gui)
-    local rightPanel = RightPanel.create(content)
+    WindowControls.create(topBar, window, gui)
 
+    local content = Instance.new("Frame")
+    content.Size = UDim2.new(1, 0, 1, -35)
+    content.Position = UDim2.new(0, 0, 0, 35)
+    content.BackgroundTransparency = 1
+    content.Parent = window
+
+    local rightPanel = RightPanel.create(content)
     local activeSection = nil
     local leftPanel
     leftPanel, _ = LeftPanel.create(content, function(sectionName)
@@ -72,7 +89,7 @@ function Main.create()
     end)
 
     local orderedSections, addedSections = {}, {}
-    for _, data in ipairs(scripts) do
+    for _, data in ipairs(Main.scripts) do
         if not addedSections[data.section] then
             table.insert(orderedSections, data.section)
             addedSections[data.section] = true
@@ -90,5 +107,4 @@ function Main.create()
     end
 end
 
-Main.scripts = scripts
 return Main

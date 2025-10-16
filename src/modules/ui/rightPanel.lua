@@ -50,7 +50,9 @@ function RightPanel.create(parent)
 	local sectionButtons = {}
 	local currentExpandedButton
 
-	function RightPanel.addButton(section, data)
+	local self = {}
+
+	function self.addButton(section, data)
 		if not sectionButtons[section] then
 			sectionButtons[section] = {}
 		end
@@ -133,11 +135,7 @@ function RightPanel.create(parent)
 			local goalSize = expanded and 42 + dropdownHeight or 42
 			TweenService:Create(btnFrame, TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(1, -10, 0, goalSize)}):Play()
 
-			if expanded then
-				showDropdown()
-			else
-				hideDropdown()
-			end
+			if expanded then showDropdown() else hideDropdown() end
 
 			currentExpandedButton = expanded and btnFrame or nil
 		end)
@@ -145,18 +143,16 @@ function RightPanel.create(parent)
 		executeBtn.MouseEnter:Connect(function()
 			TweenService:Create(executeBtn, TweenInfo.new(0.2), {BackgroundColor3 = ExecuteHover}):Play()
 		end)
-
 		executeBtn.MouseLeave:Connect(function()
 			TweenService:Create(executeBtn, TweenInfo.new(0.2), {BackgroundColor3 = ExecuteColor}):Play()
 		end)
 
 		executeBtn.MouseButton1Click:Connect(function()
 			if not data.url or #data.url == 0 then return end
-			if not string.match(data.url, "^https://raw%.githubusercontent%.com/") then
-				warn("[⚠️] Script blocked! Only URLs from raw.githubusercontent.com are allowed.")
+			if not string.match(data.url, "^https://raw%.githubusercontent%.com/wolf%-whitz/WhitzHub/") then
+				warn("[⚠️] Script blocked! Only scripts from wolf-whitz/WhitzHub are allowed.")
 				return
 			end
-
 			local success, err = pcall(function()
 				local func, loadErr = loadstring(game:HttpGet(data.url, true))
 				if not func then error(loadErr) end
@@ -168,7 +164,7 @@ function RightPanel.create(parent)
 		table.insert(sectionButtons[section], btnFrame)
 	end
 
-	function RightPanel.switchTo(section)
+	function self.switchTo(section)
 		for sec, buttons in pairs(sectionButtons) do
 			for _, btn in ipairs(buttons) do
 				btn.Visible = (sec == section)
@@ -176,7 +172,7 @@ function RightPanel.create(parent)
 		end
 	end
 
-	return RightPanel
+	return self
 end
 
 return RightPanel
