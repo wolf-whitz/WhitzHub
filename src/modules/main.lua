@@ -22,6 +22,7 @@ scripts = {
 }
 -- END SCRIPTS TABLE
 
+
 local WindowControls = import("./ui/windowControls")
 local LeftPanel = import("./ui/leftPanel")
 local RightPanel = import("./ui/rightPanel")
